@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-k2q4krne^1e@7#+&(_!1(ka(-%*&j53(3lcwfx40rh&ibb=azk
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['105.73.80.39','fraude.omegasin.ma']
+ALLOWED_HOSTS = ['92.222.221.200','fraude.omegasin.ma']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'VEO',
     'accounts',
-    'rest_framework',
     'apis',
     'django_filters',
     'dbbackup',
@@ -83,16 +82,27 @@ WSGI_APPLICATION = 'veosmart.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'veo',
-        'USER': 'postgres',
-        'PASSWORD': 'veosmart2021' ,
+        'USER': 'veosmart1',
+        'PASSWORD': 'MDPveosmart@123' ,
         'PORT': '5432',
-        'HOST': '0.0.0.0'
+        'HOST': '92.222.221.200'
     }
 }
+#DATABASES = {
+ #   'default': {
+  #      'ENGINE': 'django.db.backends.postgresql',
+   #     'NAME': 'fraude',
+    #    'USER': 'veosmart1',
+     #   'PASSWORD': 'MDPveosmart@123' ,
+      #  'PORT': '5432',
+       # 'HOST': '0.0.0.0'
+    #}
+#}
 
 
 # Password validation

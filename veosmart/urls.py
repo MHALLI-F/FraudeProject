@@ -15,7 +15,7 @@ Including another URLconf
 
 from django.contrib import admin
 from django.urls import path,include
-from VEO.views import getVeos,get_dossiers, get_veoservices, template, filtre_regAT,filtre_regT,filtre_reg,test_filtre_regAT,test_filtre_regT,test_filtre_reg,filterDosT,filterDosAT,test_filterDosAT,test_filtre,test_filterDosT,test_observation,test_filterDos,test_dossierstrait,test_dossiersAtrait, dossierstrait, test_inis,test_details, inis,details,filterDos, filtre, observation, dossiersAtrait,TrdateT,TrdateIT,TrDosT,TrImmatT,TrDsinT,TrDcrT,TrTypeT,TrStatT,TrExpT,TrIAdvT,TrRFT,TrStatDouteT,TrobsT , TrDosIT,TrImmatIT,TrDsinIT,TrDcrIT,TrTypeIT,TrStatIT,TrExpIT,TrIAdvIT,TrRFIT,TrStatDouteIT,TrobsIT, TrDosAT,TrImmatAT,TrDsinAT,TrDcrAT,TrTypeAT,TrStatAT,TrExpAT,TrIAdvAT,TrRFAT,TrStatDouteAT,TrobsAT , TrDosIAT,TrImmatIAT,TrDsinIAT,TrDcrIAT,TrTypeIAT,TrStatIAT,TrExpIAT,TrIAdvIAT,TrRFIAT,TrStatDouteIAT,TrobsIAT, TrDos,TrImmat,TrDsin,TrDcr,TrType,TrStat,TrExp,TrIAdv,TrRF,TrStatDoute,Trobs , TrDosI,TrImmatI,TrDsinI,TrDcrI,TrTypeI,TrStatI,TrExpI,TrIAdvI,TrRFI,TrStatDouteI,TrobsI,test_TrdateT,test_TrdateIT,test_TrDosT,test_TrImmatT,test_TrDsinT,test_TrDcrT,test_TrTypeT,test_TrStatT,test_TrExpT,test_TrIAdvT,test_TrRFT,test_TrStatDouteT,test_TrobsT , test_TrDosIT,test_TrImmatIT,test_TrDsinIT,test_TrDcrIT,test_TrTypeIT,test_TrStatIT,test_TrExpIT,test_TrIAdvIT,test_TrRFIT,test_TrStatDouteIT,test_TrobsIT, test_TrDosAT,test_TrImmatAT,test_TrDsinAT,test_TrDcrAT,test_TrTypeAT,test_TrStatAT,test_TrExpAT,test_TrIAdvAT,test_TrRFAT,test_TrStatDouteAT,test_TrobsAT , test_TrDosIAT,test_TrImmatIAT,test_TrDsinIAT,test_TrDcrIAT,test_TrTypeIAT,test_TrStatIAT,test_TrExpIAT,test_TrIAdvIAT,test_TrRFIAT,test_TrStatDouteIAT,test_TrobsIAT, test_TrDos,test_TrImmat,test_TrDsin,test_TrDcr,test_TrType,test_TrStat,test_TrExp,test_TrIAdv,test_TrRF,test_TrStatDoute,test_Trobs , test_TrDosI,test_TrImmatI,test_TrDsinI,test_TrDcrI,test_TrTypeI,test_TrStatI,test_TrExpI,test_TrIAdvI,test_TrRFI,test_TrStatDouteI,test_TrobsI
+from VEO.views import extraction_traitement, dossierstrait, getVeos,get_dossiers, get_veoservices, template, filtre_regAT,filtre_regT,filtre_reg,test_filtre_regAT,test_filtre_regT,test_filtre_reg,filterDosT,filterDosAT,test_filterDosAT,test_filtre,test_filterDosT,test_observation,test_filterDos,test_dossierstrait,test_dossiersAtrait, dossierstrait, test_inis,test_details, inis,details,filterDos, filtre, observation, dossiersAtrait,TrdateT,TrdateIT,TrDosT,TrImmatT,TrDsinT,TrDcrT,TrTypeT,TrStatT,TrExpT,TrIAdvT,TrRFT,TrStatDouteT,TrobsT , TrDosIT,TrImmatIT,TrDsinIT,TrDcrIT,TrTypeIT,TrStatIT,TrExpIT,TrIAdvIT,TrRFIT,TrStatDouteIT,TrobsIT, TrDosAT,TrImmatAT,TrDsinAT,TrDcrAT,TrTypeAT,TrStatAT,TrExpAT,TrIAdvAT,TrRFAT,TrStatDouteAT,TrobsAT , TrDosIAT,TrImmatIAT,TrDsinIAT,TrDcrIAT,TrTypeIAT,TrStatIAT,TrExpIAT,TrIAdvIAT,TrRFIAT,TrStatDouteIAT,TrobsIAT, TrDos,TrImmat,TrDsin,TrDcr,TrType,TrStat,TrExp,TrIAdv,TrRF,TrStatDoute,Trobs , TrDosI,TrImmatI,TrDsinI,TrDcrI,TrTypeI,TrStatI,TrExpI,TrIAdvI,TrRFI,TrStatDouteI,TrobsI,test_TrdateT,test_TrdateIT,test_TrDosT,test_TrImmatT,test_TrDsinT,test_TrDcrT,test_TrTypeT,test_TrStatT,test_TrExpT,test_TrIAdvT,test_TrRFT,test_TrStatDouteT,test_TrobsT , test_TrDosIT,test_TrImmatIT,test_TrDsinIT,test_TrDcrIT,test_TrTypeIT,test_TrStatIT,test_TrExpIT,test_TrIAdvIT,test_TrRFIT,test_TrStatDouteIT,test_TrobsIT, test_TrDosAT,test_TrImmatAT,test_TrDsinAT,test_TrDcrAT,test_TrTypeAT,test_TrStatAT,test_TrExpAT,test_TrIAdvAT,test_TrRFAT,test_TrStatDouteAT,test_TrobsAT , test_TrDosIAT,test_TrImmatIAT,test_TrDsinIAT,test_TrDcrIAT,test_TrTypeIAT,test_TrStatIAT,test_TrExpIAT,test_TrIAdvIAT,test_TrRFIAT,test_TrStatDouteIAT,test_TrobsIAT, test_TrDos,test_TrImmat,test_TrDsin,test_TrDcr,test_TrType,test_TrStat,test_TrExp,test_TrIAdv,test_TrRF,test_TrStatDoute,test_Trobs , test_TrDosI,test_TrImmatI,test_TrDsinI,test_TrDcrI,test_TrTypeI,test_TrStatI,test_TrExpI,test_TrIAdvI,test_TrRFI,test_TrStatDouteI,test_TrobsI
 
 
 from accounts.views import login_view ,deconnexion
@@ -30,7 +30,7 @@ urlpatterns = [
     path('get_dossier/<str:Dossier>/',get_veoservices,name="get_veoservices"),
     path('get_dossiers/',get_dossiers,name="get_dossiers"),
     path('getVeos/',getVeos,name="getVeos"),
-
+    path('extraction_traitement/',extraction_traitement,name="extraction_traitement"),
 
     path('admin/', admin.site.urls),   
     path('home/', inis,name="inis"),
@@ -42,7 +42,7 @@ urlpatterns = [
     path('filtre_regAT/',filtre_regAT,name="filtre_regAT"),
     path('filtre_reg/',filtre_reg,name="filtre_reg"),
     path('dt/',dossiersAtrait,name="dossiersAtrait"),
-    path('dtraités/',dossierstrait,name="dossierstrait"),
+    path('dtraités/',dossierstrait,name="dossierstrait1"),
     path('filterDos/',filterDos,name="filterDos"),
     path('filterDosAT/',filterDosAT,name="filterDosAT"),
     path('filterDosT/',filterDosT,name="filterDosT"),

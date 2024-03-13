@@ -424,11 +424,20 @@ document.getElementById("search").value="{{query}}"
 
 <td>{{i.Statut}}</td>
 <td>{% if i.Photos_Avant != "" and i.Photos_Avant != None %} <a href="{{i.Photos_Avant}}"role="button" target="_blank"    >    <i class="far fa-image fa-2x"></i> {% endif %}</td>
+{% if i.RateFraude == None %}
+<td></td>
+{% else %}
 <td>
-<a href="{% url 'details' i.id %}"  > {{i.RateFraude}}% </a></td>														            
-<td>{{i.Expert}}</td>     <td>{{i.ImmatriculationAdverse}}</td>  																								   
 
-<td>{{i.statutdoute}}</td>  
+<a href="{% url 'details' i.id %}"  > {{i.RateFraude}}% </a></td>	
+{% endif %}
+<td>{{i.Expert}}</td>     <td>{{i.ImmatriculationAdverse}}</td>  																								   
+{% if i.statutdoute == None %}
+<td></td>
+{% else %}
+
+<td>{{i.statutdoute}}</td>
+{% endif %}
 
 
 

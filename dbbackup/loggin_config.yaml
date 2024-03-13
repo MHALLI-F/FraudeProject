@@ -1,0 +1,4 @@
+# Exemple minimal de configuration de logging pour dbbackup
+version: 1
+disable_existing_loggers: false
+

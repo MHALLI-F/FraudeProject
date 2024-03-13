@@ -121,7 +121,7 @@ class Veodata(models.Model):
     ImmatriculationAdverse=models.TextField()
     Okpoursouscription=models.TextField()
     Statutgarage=models.TextField()
-    record_id=models.TextField()
+    Status=models.TextField()
     CreatedDate=models.TextField()
     Datesinistre=models.TextField()
     Nomintermédiairecp=models.TextField()
@@ -290,24 +290,22 @@ class Veoservices(models.Model):
 
     def Reg1(self):
         R=None
-        
-        
         Rate=0
         if self.Immatriculation != None and len(self.Immatriculation) not in [1,2,3]:
             self.Immatriculation=Preprocessing_Imm(self.Immatriculation)
-         
 
         if self.ImmatriculationAdverse != None and len(self.ImmatriculationAdverse) not in [1,2,3]:
             self.ImmatriculationAdverse=Preprocessing_Imm(self.ImmatriculationAdverse)
-        Liste=list(Veodata.objects.all())
-
+        Liste=list(Veodata.objects.filter(Statutgarage ="Cas douteux"))
+        doute_Princ=None
+        doute_Adv=None
         for j in Liste:
-              #Eviter  les  cas  douteux  avec la  mm  ref  dossier   
-           # if (self.Dossier != j.id) and (self.Immatriculation not in [None,""] and len(j.Immatriculation) not in [1,2,3]) and (Preprocessing_Imm(j.Immatriculation) == self.Immatriculation or Preprocessing_Imm(j.ImmatriculationAdverse) == self.Immatriculation) and ((j.Statutgarage is not  None) and (j.Statutgarage.lower()=="cas douteux")):
-            if   (self.Immatriculation not in [None,""] and len(j.Immatriculation) not in [1,2,3]) and (Preprocessing_Imm(j.Immatriculation) == self.Immatriculation or Preprocessing_Imm(j.ImmatriculationAdverse) == self.Immatriculation) and ((j.Statutgarage is not  None) and (j.Statutgarage.lower()=="cas douteux")):
+        #Eviter  les  cas  douteux  avec la  mm  ref  dossier   
+        # if (self.Dossier != j.id) and (self.Immatriculation not in [None,""] and len(j.Immatriculation) not in [1,2,3]) and (Preprocessing_Imm(j.Immatriculation) == self.Immatriculation or Preprocessing_Imm(j.ImmatriculationAdverse) == self.Immatriculation) and ((j.Statutgarage is not  None) and (j.Statutgarage.lower()=="cas douteux")):
+            if(self.Immatriculation not in [None,""] and len(j.Immatriculation) not in [1,2,3]) and (self.ImmatriculationAdverse not in [None,""] and len(j.ImmatriculationAdverse) not in [1,2,3]) and (Preprocessing_Imm(j.Immatriculation) == self.Immatriculation or Preprocessing_Imm(j.ImmatriculationAdverse) == self.Immatriculation) and ((j.Statutgarage is not  None) and (j.Statutgarage.lower()=="cas douteux")):
                 
                 Rate=30
-                R="30%: l'immatriculation principale a déjà été impliquée dans un dossier historique signalé douteux "+str(j.id)
+                R="30%: l'immatriculation principale a déjà été impliquée dans un dossier historique signalé douteux: "+str(j.id)
                 #La declaration douteux pour  afficher le  détail
                 doute_Princ=j
                 break
@@ -315,7 +313,7 @@ class Veoservices(models.Model):
                 doute_Princ=None
         for i in Liste:
            # if (self.Dossier != i.id) and  (self.ImmatriculationAdverse not in [None,""] and len(i.Immatriculation) not in [1,2,3]) and( Preprocessing_Imm(i.Immatriculation) == self.ImmatriculationAdverse or Preprocessing_Imm(i.ImmatriculationAdverse) == self.ImmatriculationAdverse) and ((i.Statutgarage is not  None) and (i.Statutgarage.lower()=="cas douteux")):
-            if (self.ImmatriculationAdverse not in [None,""] and len(i.Immatriculation) not in [1,2,3]) and( Preprocessing_Imm(i.Immatriculation) == self.ImmatriculationAdverse or Preprocessing_Imm(i.ImmatriculationAdverse) == self.ImmatriculationAdverse) and ((i.Statutgarage is not  None) and (i.Statutgarage.lower()=="cas douteux")):
+            if (self.Immatriculation not in [None,""] and len(i.Immatriculation) not in [1,2,3]) and (self.ImmatriculationAdverse not in [None,""] and len(i.ImmatriculationAdverse) not in [1,2,3]) and( Preprocessing_Imm(i.Immatriculation) == self.ImmatriculationAdverse or Preprocessing_Imm(i.ImmatriculationAdverse) == self.ImmatriculationAdverse) and ((i.Statutgarage is not  None) and (i.Statutgarage.lower()=="cas douteux")):
                     
                 Rate=30
                 R="30%: l'immatriculation adverse a déjà été impliquée dans un dossier historique signalé douteux: "+str(i.id)
@@ -392,7 +390,7 @@ class Veoservices(models.Model):
 
         if self.ImmatriculationAdverse != None and len(self.ImmatriculationAdverse) not in [1,2,3]:
             self.ImmatriculationAdverse=Preprocessing_Imm(self.ImmatriculationAdverse)
-        Liste=list(Veodata.objects.filter( Type__icontains="Souscription"))
+        Liste=list(Veodata.objects.filter( Type__icontains="Souscription").filter(Okpoursouscription="NOK"))
         for A in Liste:
             if self.Immatriculation not in [None,""] and Preprocessing_Imm(A.Immatriculation) == self.Immatriculation and A.Okpoursouscription=="NOK":
                 Rate=15
@@ -668,7 +666,7 @@ class Veoservices(models.Model):
                 i.Immatriculation=Preprocessing_Imm(i.Immatriculation)
             if i.ImmatriculationAdverse != None and len(i.ImmatriculationAdverse) not in [1,2,3]:
                 i.ImmatriculationAdverse=Preprocessing_Imm(i.ImmatriculationAdverse)
-            if i.Immatriculation != "" and i.Immatriculation == self.Immatriculation and self.Immatriculation != "" and self.ImmatriculationAdverse != "" and i.ImmatriculationAdverse != "" and i.ImmatriculationAdverse == self.ImmatriculationAdverse and i.Dossier != self.Dossier and i.Statut !="Changement procédure" and self.Statut !="Changement procédure" and i.Date_sinistre != self.Date_sinistre:    
+            if i.Immatriculation != "" and i.Immatriculation != None and  self.Immatriculation != None and  i.Immatriculation == self.Immatriculation and self.Immatriculation != "" and i.ImmatriculationAdverse != None and self.ImmatriculationAdverse != None and self.ImmatriculationAdverse != "" and i.ImmatriculationAdverse != "" and i.ImmatriculationAdverse == self.ImmatriculationAdverse and i.Dossier != self.Dossier and i.Statut !="Changement procédure" and self.Statut !="Changement procédure" and i.Date_sinistre != self.Date_sinistre:    
                     
                     Rate=30
                     R="Il y a un autre  sinistre avec  la même Immatriculation Pricipale et Adverse: "+str(i.Dossier)

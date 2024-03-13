@@ -10,8 +10,11 @@ from django.core.serializers import serialize
 import json
 
 from django.core.serializers.json import DjangoJSONEncoder
+import psycopg2
+import gzip
+from django.http import FileResponse
 
-
+import csv
 
 
 # nettoyage  de  numéro de  chassis
@@ -121,6 +124,23 @@ def str_to_float(stri):
     return stri
 
 
+def extraction_traitement(request):
+    conn = psycopg2.connect(host='0.0.0.0', port=5432, dbname='veo' ,user='postgres', password='MDPveosmart@123')
+
+    cur = conn.cursor()
+
+    # export to csv
+    fid=open('/home/extraction/dossierstraités.csv','w')
+    sql = 'COPY (SELECT * FROM public."VEO_veoservices"  ) TO STDOUT  WITH (FORMAT CSV, HEADER, ENCODING "UTF-8");'
+    cur.copy_expert(sql, fid)
+    fid.close()
+    fd = open('/home/extraction/dossierstraités.csv', 'rb')
+    return FileResponse(fd, as_attachment=True, filename='Extraction_dossierstraités.csv')
+
+
+
+
+
 @login_required
 def inis(request):
     Today_DateVeo=datetime.datetime.today().strftime('%d/%m/%Y %H:%M')
@@ -129,17 +149,20 @@ def inis(request):
     NBDAT=nbrDAT()
     list_Veo_recente=[]
     NBD=0
-    list_Veoservices=Veoservices.objects.all()
+    list_Veo_recente = Veoservices.objects.exclude(Date_création__isnull=True,Statut="Changement procédure",RateFraude__in=[100]).annotate(RateFraude_float=Cast('RateFraude', FloatField())).order_by('-Date_création')
+#list_Veo_recente = Veoservices.objects.filter(Date_création__isnull=False,Statut="Changement procédure",RateFraude__in=[100,30]).order_by('-Date_création')
+    #list_Veoservices=Veoservices.objects.all()
     Rate=0
-    for i in list_Veoservices:
-        if i.Date_création!=None:
-            i.Date_création=datetime.datetime.strptime(i.Date_création, '%d/%m/%Y %H:%M')
-            i.RateFraude = str_to_float(i.RateFraude)
-        if (i.Statut!= "Changement procédure") and (i.RateFraude not in [0,0.0,None]):
+
+  #  for i in list_Veoservices:
+   #     if i.Date_création!=None:
+    #        i.Date_création=datetime.datetime.strptime(i.Date_création, '%d/%m/%Y %H:%M')
+     #       i.RateFraude = str_to_float(i.RateFraude)
+   #     if (i.Statut!= "Changement procédure") and (i.RateFraude in [100]):
             
-            list_Veo_recente.append(i)
+    #        list_Veo_recente.append(i)
             
-    list_Veo_recente.sort(key=lambda r: r.Date_création,reverse=True)
+#    list_Veo_recente.sort(key=lambda r: r.Date_création,reverse=True)
     paginator = Paginator(list_Veo_recente,9)
     page = request.GET.get('page')
     veopg = paginator.get_page(page)
@@ -153,52 +176,54 @@ def details(request, Dossier):
     Rate=Veo.RateFraude
     NBD=nbrDAT()
     NBDT=nbrDT()
-    R1=Veo.Reg1()[0]
-    R1_P=Veo.Reg1()[1]
-    R1_A=Veo.Reg1()[2]
-
-    R2=Veo.Reg2()[0]
-    R2_DDA=Veo.Reg2()[1]
-    R2_DS=Veo.Reg2()[2]
-
-    R3=Veo.Reg3()[0]
-    R3_DDA=Veo.Reg3()[1]
-    R3_DS=Veo.Reg3()[2]
-
-    R4=Veo.Reg4()[0]
-    R4_SP=Veo.Reg4()[1]
-    R4_SA=Veo.Reg4()[2]
-
-    R5=Veo.Reg5()[0]
+    ls=Veo.Reg1()
+    R1=ls[0]
+    R1_P=ls[1]
+    R1_A=ls[2]
+    ls=Veo.Reg2()
+    R2=ls[0]
+    R2_DDA=ls[1]
+    R2_DS=ls[2]
+    ls=Veo.Reg3()
+    R3=ls[0]
+    R3_DDA=ls[1]
+    R3_DS=ls[2]
+    ls=Veo.Reg4()
+    R4=ls[0]
+    R4_SP=ls[1]
+    R4_SA=ls[2]
+    ls=Veo.Reg5()
+    R5=ls[0]
     #Dossier assistance qui à la  date moins  de 7h et plus de 20h
-    R5_Assis=Veo.Reg5()[1]
-
-    R6=Veo.Reg6()[0]
+    R5_Assis=ls[1]
+    ls=Veo.Reg6()
+    R6=ls[0]
     #Les  deux dossiers Assistance qui ne dépassent pas 3 mois
-    R6_Assis1=Veo.Reg6()[1]
-    R6_Assis2=Veo.Reg6()[2]
-
-    R7=Veo.Reg7()[0]
-    R7_P=Veo.Reg7()[1]
-    R7_A=Veo.Reg7()[2]
-
-    R9=Veo.Reg9()[0]
-    R9_DFP=Veo.Reg9()[1]
-    R9_DS=Veo.Reg9()[2]
+    R6_Assis1=ls[1]
+    R6_Assis2=ls[2]
+    ls=Veo.Reg7()
+    R7=ls[0]
+    R7_P=ls[1]
+    R7_A=ls[2]
+    ls=Veo.Reg9()
+    R9=ls[0]
+    R9_DFP=ls[1]
+    R9_DS=ls[2]
 
     R8=Veo.Reg8()
-
-    R10=Veo.Reg10()[0]
-    R10_Dos=Veo.Reg10()[1]
+    ls=Veo.Reg10()
+    R10=ls[0]
+    R10_Dos=ls[1]
+    ls=Veo.Reg12()
+    R12=ls[0]
+    R12_Dos=ls[1]
     
-    R12=Veo.Reg12()[0]
-    R12_Dos=Veo.Reg12()[1]
 
     R11=Veo.Reg11()
-
-    R13=Veo.Reg13()[0]
-    R13_Dos=Veo.Reg13()[1]
-
+    ls=Veo.Reg13()
+    R13=ls[0]
+    R13_Dos=ls[1]
+    
     R14 =Veo.Reg14()
     # Vérifier si c'est superuser
     if request.user.is_superuser:
@@ -241,7 +266,7 @@ def DosAff():
     for i in list_Veoservices:
         if i.Date_création!=None:
             Date_création=datetime.datetime.strptime(i.Date_création,'%d/%m/%Y %H:%M')
-            if ((((Today_DateVeo-Date_création).days<=25) and (i.Statut!= "Changement procédure")) or (i.statutdoute=="Attente photos Avant" and i.Photos_Avant!="" and i.Photos_Avant!=None and i.Statut!="Changement de procédure" ) )and i.RateFraude not in [0,"0.0","","'0.0'",0.0,None]:
+            if ((((Today_DateVeo-Date_création).days<=50) and (i.Statut!= "Changement procédure")) or (i.statutdoute=="Attente photos Avant" and i.Photos_Avant!="" and i.Photos_Avant!=None and i.Statut!="Changement de procédure" ) )and i.RateFraude not in [0,"0.0","","'0.0'",0.0,None]:
                 list_Veo_recente.append(i)
     return  list_Veo_recente
 
@@ -388,6 +413,7 @@ def TrIAdv(request):
     tri=8
     context={"SupUse":SupUse(request),"NBDT":NBDT,"NBDossiers":nbr,"list_Veo_recente": veopg, "tri":tri}
     return render(request,"home.html",context)
+
 
 def TrRF(request):
     list_Veo_recente=DosAff()
@@ -1481,9 +1507,9 @@ def dossierstrait(request):
         if i.statutdoute == "Doute confirmé":
             list_Veo_Doute.append(i)
     list_Veo_Doute.sort(key=lambda r: r.RateFraude,reverse=True)
-    paginatorD = Paginator(list_Veo_Doute,9)
-    pageD = request.GET.get('pageD')
-    veoD = paginator.get_page(pageD)
+   # paginatorD = Paginator(list_Veo_Doute,9)
+   # pageD = request.GET.get('pageD')
+   # veoD = paginator.get_page(pageD)
     context={"SupUse":SupUse(request),"list_Veo_recente": veopg,"list_Veo_Doute": DosAffdout(),"NBDossiers":NBD,"NBDT":NBDT}
     return render(request,"dossiertrait.html",context)
 @login_required
@@ -3527,32 +3553,23 @@ def test_filtre_regAT(request):
         for i in listedossiers:
             if i.R13 != None and "doute confirmé" in i.R13 :
                 liste.append(i)
-
     elif (ch =="R13_rejete"):
         for i in listedossiers:
             if i.R13 != None and "doute rejeté" in i.R13 :
                 liste.append(i)
-
-                
     elif (ch =="R14"):
         for i in listedossiers:
             if i.R14 != None and i.R14 != "":
                 liste.append(i)
-
     paginator = Paginator(liste,9)
     page = request.GET.get('page')
     veopg = paginator.get_page(page)
-    NBD=test_nbrDAT()    
-    
+    NBD=test_nbrDAT()        
     context={"SupUse":SupUse(request),"list_Veo_recente": veopg,"NBDossiers":NBD}
-    
     return render(request,"dossieratrait_test.html",context)
-
-
     
 def test_filtre_regT(request):
-    ch=request.GET.get('reg')
-    
+    ch=request.GET.get('reg')    
     liste=[]
     listedossiers =test_DosTAff()
     if (ch=="R1"):
@@ -3566,8 +3583,7 @@ def test_filtre_regT(request):
     elif (ch =="R3"):
         for i in listedossiers:
             if i.R3 != None and i.R3 != "":
-                liste.append(i)
-        
+                liste.append(i)        
     elif (ch =="R4"):
         for i in listedossiers:
             if i.R4 != None and i.R4 != "":
@@ -3603,32 +3619,25 @@ def test_filtre_regT(request):
     elif (ch =="R12"):
         for i in listedossiers:
             if i.R12 != None and i.R12 != "":
-                liste.append(i)
-  
+                liste.append(i)  
     elif (ch =="R13_confirme"):
         for i in listedossiers:
             if i.R13 != None and "doute confirmé" in i.R13 :
                 liste.append(i)
-
     elif (ch =="R13_rejete"):
         for i in listedossiers:
             if i.R13 != None and "doute rejeté" in i.R13 :
-                liste.append(i)
-
-                
+                liste.append(i)                
     elif (ch =="R14"):
         for i in listedossiers:
             if i.R14 != None and i.R14 != "":
                 liste.append(i)
-
     paginator = Paginator(liste,9)
     page = request.GET.get('page')
     veopg = paginator.get_page(page)
     NBDAT=test_nbrDAT()    
-    context={"SupUse":SupUse(request),"list_Veo_recente": veopg,"list_Veo_Doute": test_DosAffdout(),"NBDossiers":NBDAT}
-    
+    context={"SupUse":SupUse(request),"list_Veo_recente": veopg,"list_Veo_Doute": test_DosAffdout(),"NBDossiers":NBDAT}    
     return render(request,"dossiertrait_test.html",context)
-
 ################## Affichage du  templates  ##############"##############"
 
 def template(request):
